@@ -290,3 +290,7 @@ It is because, in JSX, lower case tag names are considered as HTML tags.
 npx create-react-app my-app
 cd my-app
 npm start
+
+34. What is shadow DOM and why it is used?
+Image result for how shadow dom works
+Shadow DOM is a web components technology that allows specific sections of the HTML document to be completely isolated from the rest of the document. This means CSS styles that are applied to the DOM are not applied to the Shadow DOM, and vice versa.
