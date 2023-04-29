@@ -1,1 +1,50 @@
+How will you connect 2 database in your application? Multiple Databases in Spring Boot?
+By default, Spring Boot will instantiate its default DataSource with the configuration properties prefixed by spring.datasource.*:
 
+spring.datasource.jdbcUrl = [url]
+spring.datasource.username = [username]
+spring.datasource.password = [password]
+
+We now want to keep using the same way to configure the second DataSource, but with a different property namespace:
+
+spring.second-datasource.jdbcUrl = [url]
+spring.second-datasource.username = [username]
+spring.second-datasource.password = [password]
+
+@Configuration
+@PropertySource({"classpath:persistence-multiple-db-boot.properties"})
+@EnableJpaRepositories(
+  basePackages = "com.baeldung.multipledb.dao.user",
+  entityManagerFactoryRef = "userEntityManager",
+  transactionManagerRef = "userTransactionManager")
+public class PersistenceUserAutoConfiguration {
+    
+    @Primary
+    @Bean
+    @ConfigurationProperties(prefix="spring.datasource")
+    public DataSource userDataSource() {
+        return DataSourceBuilder.create().build();
+    }
+    // userEntityManager bean 
+
+    // userTransactionManager bean
+}
+
+@Configuration
+@PropertySource({"classpath:persistence-multiple-db-boot.properties"})
+@EnableJpaRepositories(
+  basePackages = "com.baeldung.multipledb.dao.product", 
+  entityManagerFactoryRef = "productEntityManager", 
+  transactionManagerRef = "productTransactionManager")
+public class PersistenceProductAutoConfiguration {
+   
+    @Bean
+    @ConfigurationProperties(prefix="spring.second-datasource")
+    public DataSource productDataSource() {
+        return DataSourceBuilder.create().build();
+    }
+   
+    // productEntityManager bean 
+
+    // productTransactionManager bean
+}
