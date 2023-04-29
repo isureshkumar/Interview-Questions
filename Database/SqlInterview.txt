@@ -2,4 +2,5 @@
 2. What is Outer join?
 3. How do you avoid duplicate records?
    * using groupby
-4.
+4. How do you fetch the employee of a highest salary which more than the average salary of all employee?
+Use Agreegate functions
