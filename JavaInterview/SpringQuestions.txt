@@ -1,4 +1,6 @@
 How will you connect 2 database in your application? Multiple Databases in Spring Boot?
+Refer for more detail : https://www.baeldung.com/spring-data-jpa-multiple-databases#:~:text=Multiple%20Databases%20in%20Spring%20Boot&text=The%20interesting%20part%20is%20annotating,take%20care%20of%20the%20rest.
+
 By default, Spring Boot will instantiate its default DataSource with the configuration properties prefixed by spring.datasource.*:
 
 spring.datasource.jdbcUrl = [url]
@@ -47,4 +49,265 @@ public class PersistenceProductAutoConfiguration {
     // productEntityManager bean 
 
     // productTransactionManager bean
+}
+
+2. What does Spring boot actuator does?
+
+3. How do you define the composite key in JPA Entity?
+
+4. What is the difference between Primary key, Unique key & Composite key ? & How do you define in entity?
+
+Basic - 	The primary key is used as a unique identifier for each record in the table.	The unique key is also a unique identifier for records when the primary key is not present in the table.
+NULL -	We cannot store NULL values in the primary key column.	We can store NULL value in the unique key column, but only one NULL is allowed.
+Purpose -	It enforces entity integrity.	It enforces unique data.
+Index	- The primary key, by default, creates clustered index.	The unique key, by default, creates a non-clustered index.
+Number of Key -	Each table supports only one primary key.	A table can have more than one unique key.
+Value Modification - We cannot change or delete the primary key values.	We can modify the unique key column values.
+Uses - It is used to identify each record in the table.	It prevents storing duplicate entries in a column except for a NULL value.
+Syntax - We can create a primary key column in the table using the below syntax:
+CREATE TABLE Employee
+(
+Id INT PRIMARY KEY, 
+name VARCHAR(150), 
+address VARCHAR(250)
+)
+We can create a unique key column in the table using the below syntax:
+CREATE TABLE Person
+(
+Id INT UNIQUE, 
+name VARCHAR(150), 
+address VARCHAR(250)
+)
+
+5. What is the api-gateway design pattern?
+
+6. What is circuit-breaker design pattern?
+
+7. How do secure your application? or using spring security?
+Refer for more detail : https://spring.io/guides/gs/securing-web/#:~:text=You%20do%20that%20by%20configuring,Spring%20Security%20to%20the%20classpath.
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-security</artifactId>
+</dependency>
+<dependency>
+	<groupId>org.thymeleaf.extras</groupId>
+	<artifactId>thymeleaf-extras-springsecurity6</artifactId>
+	<!-- Temporary explicit version to fix Thymeleaf bug -->
+	<version>3.1.1.RELEASE</version>
+</dependency>
+<dependency>
+	<groupId>org.springframework.security</groupId>
+	<artifactId>spring-security-test</artifactId>
+	<scope>test</scope>
+</dependency>
+
+package com.example.securingweb;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+@EnableWebSecurity
+public class WebSecurityConfig {
+
+	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		http
+			.authorizeHttpRequests((requests) -> requests
+				.requestMatchers("/", "/home").permitAll()
+				.anyRequest().authenticated()
+			)
+			.formLogin((form) -> form
+				.loginPage("/login")
+				.permitAll()
+			)
+			.logout((logout) -> logout.permitAll());
+
+		return http.build();
+	}
+
+	@Bean
+	public UserDetailsService userDetailsService() {
+		UserDetails user =
+			 User.withDefaultPasswordEncoder()
+				.username("user")
+				.password("password")
+				.roles("USER")
+				.build();
+
+		return new InMemoryUserDetailsManager(user);
+	}
+}
+
+8. How will you count the characters count in a given string using java 8?
+
+  String str = "Hello Manash";
+  Map<Character,Long> hm = str.chars().mapToObj(c-> 
+  (char)c).collect(Collectors.groupingBy(c->c,Collectors.counting()));
+  System.out.println(hm);
+    
+  List<Character> chars=Arrays.asList('h','e','l','l','o','w','o','r','l','d');
+  Map<Character,Long> map=chars.stream().map(c->c).
+  collect(Collectors.groupingBy(c->c,Collectors.counting()));
+  System.out.println(map);
+  
+  String word = "AAABBB";
+  Map<String, Long> charCount = word.codePoints().mapToObj(Character::toString).collect(Collectors.groupingBy(Function.identity(),Collectors.counting()));
+  System.out.println(charCount);
+
+9. Difference between map & flatmap?
+
+10. Purpose of functional interface?
+
+Functional Interface in Java enables users to implement functional programming in Java. In functional programming, the function is an independent entity.
+// interface
+@FunctionalInterface
+interface Sample{
+    // abstract method
+    int calculate(int val);
+}
+// public class
+public class Main{
+    public static void main(String[] args){
+        
+        // implementing the abstract method of the interface
+        Sample solution = (int val) -> val+51;
+        
+        // calling the method
+        System.out.println("Ans = "+ solution.calculate(51));
+    }
+}
+
+Examples of predefined Java functional interfaces are Runnable, Comparable, ActionListener, Callable, etc.
+
+Types of Functional interfaces
+Functional interfaces in Java are mainly of four types: Consumer and Bi-consumer, Predicate and Bi-predicate, Function and Bi-Function, Supplier
+
+Function and Bi-Function,
+The function type functional interface receives a single argument, processes it, and returns a value.
+@FunctionalInterface
+public interface Function<T, R>{
+    R apply(T t);
+}
+import java.util.function.Function;
+import java.util.*;
+public class Sample{
+    
+    // to store details of the employee
+    private static HashMap<Integer, String> Employee = new HashMap<>();
+    // add method to add employee details to the hashmap
+    public static void add(String name, int ID){
+        if(!Employee.containsKey(ID)){
+            Employee.put(ID,name);
+        }else
+            System.out.println("Employee already Registered");
+    }
+    
+    // main method
+    public static void main(String[] args){
+        
+        // function to get the name of the employee name from its id
+        Function<Integer, String> get = (Integer ID) -> {
+            if(Employee.containsKey(ID)) return Employee.get(ID);
+            else
+                return "Invalid ID";
+        };
+
+        
+        // adding elements to the hashmap
+        add("Tom Jones",1045);
+        add("Nancy Smith", 1065);
+        add("Deborah Sprightly", 1029);
+        add("Ethan Hardy", 1025);
+        
+        // using get method of Function to fetch name of the employee
+        System.out.println("ID = 1029, Name = "+get.apply(1029));
+    }
+}
+
+Bi-Function
+@FunctionalInterface
+public interface BinaryOperator<T> extends BiFunction<T, T, T>{
+    // add methods here
+}
+
+import java.util.function.Function;
+import java.util.function.BinaryOperator;
+  
+public class Main{
+    public static void main(String args[]){
+        BinaryOperator<Integer> and = (a,b) -> a & b;
+        System.out.println(and.apply(12, 4));
+    }
+}
+
+Supplier
+The supplier functional interface in Java is much like a functional interface, the only difference is it doesn't take any arguments. On calling the supplier it simply returns a value. 
+
+@FunctionalInterface
+public interface Supplier<T>{
+    T get();
+}
+
+import java.util.function.Supplier;
+
+public class Test {
+    public static void main(String[] args) {
+        Supplier<String> message = () -> "Hello There!";
+        System.out.println(message.get());
+    }
+}
+
+Consumer
+The Consumer functional interface in Java accepts a single gentrified argument and doesn't return any value.
+
+
+@FunctionalInterface
+public interface Consumer<T>{
+    void accept(T t);
+}
+
+import java.util.function.BiConsumer;
+
+public class Test {
+    public static void main(String[] args) {
+        BiConsumer<Integer, Integer> eligibility = (Integer age, Integer percentage) -> {
+            if (age > 14 && percentage > 75)
+                System.out.println("You're eligible to participate in school elections");
+            else
+                System.out.println("The eligibility criteria is Age > 14 and Percentage > 75");
+        };
+
+        eligibility.accept(16, 89);
+    }  
+}
+
+Predicate
+The predicate functional interface in Java takes a single argument and returns a boolean value.
+
+public interface Predicate<T>{
+    boolean test(T t);
+}
+import java.util.*;
+import java.util.function.Predicate;
+
+public class Test {
+    public static void main(String[] args) {
+        Predicate<String> checkLength = (String s) -> s.length() == 8;
+        System.out.println("Functional Interfaces having length 8 are:-");
+        List<String> FunctionalInterfaces = Arrays.asList("Predicate", "Function", "Consumer", "Supplier");
+        FunctionalInterfaces.forEach(x -> {
+                    if (checkLength.test(x)) {
+                        System.out.println(x);
+                    }
+                }
+        );
+    }
 }
