@@ -1,1 +1,5 @@
-
+1. How to call one microservice from another microservice in spring boot?
+Note that we are using RestTemplate to make a REST API call to department-service:
+        ResponseEntity<DepartmentDto> responseEntity = restTemplate
+                .getForEntity("http://localhost:8080/api/departments/" + user.getDepartmentId(),
+                DepartmentDto.class);
